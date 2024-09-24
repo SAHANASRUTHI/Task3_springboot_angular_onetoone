@@ -1,0 +1,140 @@
+<div>
+
+    <div *ngIf="!isEditing && !isAdding">
+        <h1>Employee Details</h1>
+        <div class="button-container-add">
+            <button class="btn-add" (click)="addEmployee()">Add New Employee</button>
+        </div>
+
+        <div class="table-container">
+            <p-table #dt [columns]="cols" [value]="employees" selectionMode="multiple" [(selection)]="selectedEmployee"
+                [tableStyle]="{ 'min-width': '50rem' }">
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th *ngFor="let col of columns">
+                            {{ col.header }}
+                        </th>
+                        <th>Edit Details</th>
+                        <th>Delete Details</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData>
+                    <tr [pSelectableRow]="rowData">
+                        <td>{{ rowData.id }}</td>
+                        <td>{{ rowData.firstName }}</td>
+                        <td>{{ rowData.lastName }}</td>
+                        <td>{{ rowData.email }}</td>
+                        <td>{{ rowData.address.street }}</td>
+                        <td>{{ rowData.address.city }}</td>
+                        <td>{{ rowData.address.state }}</td>
+                        <td>
+                            <button class="btn-edit" (click)="editEmployee(rowData)">Edit</button>
+                        </td>
+                        <td>
+                            <button class="btn-delete" type="button"
+                                (click)="deleteEmployee(rowData.id)">Delete</button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <div *ngIf="employees.length === 0">
+            No employees found.
+        </div>
+    </div>
+
+    <div class="form-container" *ngIf="isEditing">
+        <h2>Edit Employee</h2>
+        <span class="close-button" (click)="cancelEdit()" title="Cancel">&times;</span>
+        <form (ngSubmit)="saveEmployee()">
+            <label for="firstName">First Name:</label>
+            <input id="firstName" [(ngModel)]="selectedEmployee!.firstName" name="firstName" required>
+
+            <label for="lastName">Last Name:</label>
+            <input id="lastName" [(ngModel)]="selectedEmployee!.lastName" name="lastName" required>
+
+            <label for="email">Email:</label>
+            <input id="email" [(ngModel)]="selectedEmployee!.email" name="email" required>
+
+            <div *ngIf="selectedEmployee!.address">
+                <label for="street">Street:</label>
+                <input id="street" [(ngModel)]="selectedEmployee!.address.street" name="street">
+
+                <label for="city">City:</label>
+                <input id="city" [(ngModel)]="selectedEmployee!.address.city" name="city">
+
+                <label for="state">State:</label>
+                <input id="state" [(ngModel)]="selectedEmployee!.address.state" name="state">
+            </div>
+
+            <div class="button-container">
+
+                <!-- <button class="btn-cancel" type="button" (click)="cancelEdit()">Cancel</button> -->
+                <button class="btn-save" type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+    <div class="form-container" *ngIf="isAdding">
+        <h2>Add New Employee</h2>
+        <span class="close-button" (click)="cancelAdd()" title="Cancel">&times;</span>
+        <form [formGroup]="newEmployeeForm" (ngSubmit)="addNewEmployee()">
+
+            <label for="firstName">First Name: <span class="required">*</span></label>
+            <input id="firstName" formControlName="firstName" [ngClass]="{'invalid': isFieldInvalid('firstName')}"
+                required>
+            <div *ngIf="isFieldInvalid('firstName')" class="error-message">
+                This field is required.
+            </div>
+
+
+            <label for="lastName">Last Name: <span class="required">*</span></label>
+            <input id="lastName" formControlName="lastName" [ngClass]="{'invalid': isFieldInvalid('lastName')}"
+                required>
+            <div *ngIf="isFieldInvalid('lastName')" class="error-message">
+                This field is required.
+            </div>
+
+
+            <label for="email">Email: <span class="required">*</span></label>
+            <input id="email" formControlName="email" [ngClass]="{'invalid': isFieldInvalid('email')}" required>
+            <div *ngIf="isFieldInvalid('email')" class="error-message">
+                Please enter a valid email address.
+            </div>
+
+            <div formGroupName="address">
+
+                <label for="street">Street: <span class="required">*</span></label>
+                <input id="street" formControlName="street" [ngClass]="{'invalid': isFieldInvalid('address.street')}"
+                    required>
+                <div *ngIf="isFieldInvalid('address.street')" class="error-message">
+                    This field is required.
+                </div>
+
+
+                <label for="city">City: <span class="required">*</span></label>
+                <input id="city" formControlName="city" [ngClass]="{'invalid': isFieldInvalid('address.city')}"
+                    required>
+                <div *ngIf="isFieldInvalid('address.city')" class="error-message">
+                    This field is required.
+                </div>
+
+
+                <label for="state">State: <span class="required">*</span></label>
+                <input id="state" formControlName="state" [ngClass]="{'invalid': isFieldInvalid('address.state')}"
+                    required>
+                <div *ngIf="isFieldInvalid('address.state')" class="error-message">
+                    This field is required.
+                </div>
+            </div>
+
+            <div class="button-container">
+
+                <!-- <button class="btn-cancel" type="button" (click)="cancelAdd()">Cancel</button> -->
+                <button class="btn-save" type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+
+
+</div>
